@@ -6,6 +6,10 @@ app.config["MONG_DBNAME"] = "seminario"
 app.config["MONGO_URI"] = "mongodb+srv://dbuser:Mvkvemu7tfb691sS@cluster0.hobus.mongodb.net/seminario?retryWrites=true&w=majority"
 db = PyMongo(app).db
 
+@app.route("/", methods=["GET"])
+def test():
+    return "Conectado"
+
 @app.route("/register/user", methods=["POST"])
 def register_user():
     try:
