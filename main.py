@@ -19,10 +19,7 @@ def register_user():
 @app.route("/login", methods=["POST"])
 def login_user():
     user = db.user.find_one({'_id': request.form["document"], "password": request.form["password"]})
-    return jsonify(user) 
+    return jsonify(user)
 
-@app.route("/", methods=["GET"])
-def hello_world():
-    return "Hello World"
 if __name__ == "__main__":
     app.run(port=4032)
