@@ -11,7 +11,7 @@ def register_user():
         "_id": request.form["document"],
         "name": request.form["name"],
         "surname": request.form["surname"],
-        "password": request.form["password"],
+        "password": request.form["password"]
     })
 
     return "Hello world"
