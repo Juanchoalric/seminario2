@@ -29,7 +29,7 @@ def register_user():
 def register_local():
     try:
         db.user.insert_one({
-            "_id": request.form["id"],
+            "_id": request.form["document"],
             "name": request.form["name"],
             "email": request.form["email"],
             "password": request.form["password"]
@@ -39,7 +39,7 @@ def register_local():
     except:
         return jsonify({"response":"Not Found", "code": 404}), 404
 
-@app.route("/login", methods=["POST"])
+@app.route("/login/user", methods=["POST"])
 def login_user():
     user = db.user.find_one({'_id': request.form["document"], "password": request.form["password"]})
     if user == None:
