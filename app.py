@@ -5,21 +5,42 @@ app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://dbuser:Mvkvemu7tfb691sS@cluster0.hobus.mongodb.net/seminario?retryWrites=true&w=majority"
 db = PyMongo(app).db
 
-@app.route("/register", methods=["POST"])
+@app.route("/register/user", methods=["POST"])
 def register_user():
-    db.user.insert_one({
-        "_id": request.form["document"],
-        "name": request.form["name"],
-        "surname": request.form["surname"],
-        "password": request.form["password"]
-    })
+    try:
+        db.user.insert_one({
+            "_id": request.form["document"],
+            "name": request.form["name"],
+            "email": request.form["email"],
+            "surname": request.form["surname"],
+            "password": request.form["password"]
+        })
 
-    return "Hello world"
+        return jsonify({"response":"Created", "code": 201}), 201
+    except:
+        return jsonify({"response":"Not Found", "code": 404}), 404
+
+@app.route("/register/local", methods=["POST"])
+def register_local():
+    try:
+        db.user.insert_one({
+            "_id": request.form["id"],
+            "name": request.form["name"],
+            "email": request.form["email"],
+            "password": request.form["password"]
+        })
+
+        return jsonify({"response":"Created", "code": 201}), 201
+    except:
+        return jsonify({"response":"Not Found", "code": 404}), 404
 
 @app.route("/login", methods=["POST"])
 def login_user():
     user = db.user.find_one({'_id': request.form["document"], "password": request.form["password"]})
-    return jsonify(user)
+    if user == None:
+        return jsonify({"response":"Not Found", "code": 404}), 404
+    user.pop("password")
+    return jsonify(user), 200
 
 if __name__ == "__main__":
     app.run(port=4032)
