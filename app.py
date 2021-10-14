@@ -6,10 +6,6 @@ app.config["MONG_DBNAME"] = "seminario"
 app.config["MONGO_URI"] = "mongodb+srv://dbuser:Mvkvemu7tfb691sS@cluster0.hobus.mongodb.net/seminario?retryWrites=true&w=majority"
 db = PyMongo(app).db
 
-@app.route("/", methods=["GET"])
-def test():
-    return "Conectado"
-
 @app.route("/register/user", methods=["POST"])
 def register_user():
     try:
@@ -31,7 +27,6 @@ def register_local():
     try:
         data = request.get_json()
         db.user.insert_one({
-            "_id": data["document"],
             "name": data["name"],
             "email": data["email"],
             "password": data["password"]
@@ -44,7 +39,7 @@ def register_local():
 @app.route("/login/user", methods=["POST"])
 def login_user():
     data = request.get_json()
-    user = db.user.find_one({'_id': data["document"], "password": data["password"]})
+    user = db.user.find_one({'email': data["email"], "password": data["password"]})
     if user == None:
         return jsonify({"response":"Not Found", "code": 404}), 404
     user.pop("password")

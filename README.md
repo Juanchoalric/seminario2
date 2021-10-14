@@ -2,7 +2,7 @@
 
 ## POST
 
-/register/user
+### /register/user
 
 {
  "document": "2323454",
@@ -12,18 +12,24 @@
  "password": "loquesea"
 }
 
-/register/local
+### /register/local
 
 {
- "document": "2323454",
- "name": "jose",
+ "name": "jose2",
+ "email": "pepe2@gmail.com",
+ "password": "loquesea"
+}
+
+### /login
+
+#### usuario
+{
  "email": "pepe@gmail.com",
  "password": "loquesea"
 }
 
-/login
-
+#### local
 {
- "documen": "232332",
+ "email": "pepe2@gmail.com",
  "password": "loquesea"
 }
