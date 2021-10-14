@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
+import uuid
 
 app = Flask(__name__)
 app.config["MONG_DBNAME"] = "seminario"
@@ -27,6 +28,7 @@ def register_local():
     try:
         data = request.get_json()
         db.user.insert_one({
+            "_id": uuid.uuid4().hex,
             "name": data["name"],
             "email": data["email"],
             "password": data["password"]
@@ -36,7 +38,7 @@ def register_local():
     except:
         return jsonify({"response":"Not Found", "code": 404}), 404
 
-@app.route("/login/user", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login_user():
     data = request.get_json()
     user = db.user.find_one({'email': data["email"], "password": data["password"]})
