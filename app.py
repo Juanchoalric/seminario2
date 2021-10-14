@@ -11,6 +11,9 @@ db = PyMongo(app).db
 def register_user():
     try:
         data = request.get_json()
+        user = db.user.find_one({"email": data["email"]})
+        if user is not None:
+            return jsonify({"response":"You are already registered in the app", "code": 400}), 400
         db.user.insert_one({
             "_id": data["document"],
             "name": data["name"],
@@ -18,15 +21,18 @@ def register_user():
             "surname": data["surname"],
             "password": data["password"]
         })
-
         return jsonify({"response":"Created", "code": 201}), 201
-    except:
+    except Exception as e:
+        print(e)
         return jsonify({"response":"Not Found", "code": 404}), 404
 
 @app.route("/register/local", methods=["POST"])
 def register_local():
     try:
         data = request.get_json()
+        local = db.user.find_one({"email": data["email"]})
+        if local is not None:
+            return jsonify({"response":"You are already registered in the app", "code": 400}), 400
         db.user.insert_one({
             "_id": uuid.uuid4().hex,
             "name": data["name"],
@@ -35,7 +41,8 @@ def register_local():
         })
 
         return jsonify({"response":"Created", "code": 201}), 201
-    except:
+    except Exception as e:
+        print(e)
         return jsonify({"response":"Not Found", "code": 404}), 404
 
 @app.route("/login", methods=["POST"])
