@@ -13,12 +13,13 @@ def test():
 @app.route("/register/user", methods=["POST"])
 def register_user():
     try:
+        data = request.get_json()
         db.user.insert_one({
-            "_id": request.form["document"],
-            "name": request.form["name"],
-            "email": request.form["email"],
-            "surname": request.form["surname"],
-            "password": request.form["password"]
+            "_id": data["document"],
+            "name": data["name"],
+            "email": data["email"],
+            "surname": data["surname"],
+            "password": data["password"]
         })
 
         return jsonify({"response":"Created", "code": 201}), 201
@@ -28,11 +29,12 @@ def register_user():
 @app.route("/register/local", methods=["POST"])
 def register_local():
     try:
+        data = request.get_json()
         db.user.insert_one({
-            "_id": request.form["document"],
-            "name": request.form["name"],
-            "email": request.form["email"],
-            "password": request.form["password"]
+            "_id": data["document"],
+            "name": data["name"],
+            "email": data["email"],
+            "password": data["password"]
         })
 
         return jsonify({"response":"Created", "code": 201}), 201
@@ -41,7 +43,8 @@ def register_local():
 
 @app.route("/login/user", methods=["POST"])
 def login_user():
-    user = db.user.find_one({'_id': request.form["document"], "password": request.form["password"]})
+    data = request.get_json()
+    user = db.user.find_one({'_id': data["document"], "password": data["password"]})
     if user == None:
         return jsonify({"response":"Not Found", "code": 404}), 404
     user.pop("password")
