@@ -61,8 +61,8 @@ def register_entry():
         data = request.get_json()
         db.entry.insert_one({
             "_id": uuid.uuid4().hex,
-            "user_name": data["user_name"],
-            "store_name": data["store_name"],
+            "user_id": data["user_id"],
+            "store_id": data["store_id"],
             "date": datetime.now().strftime("%d-%b-%Y"),
             "time": datetime.now().strftime("%H:%M:%S")
         })
@@ -73,7 +73,7 @@ def register_entry():
 @app.route('/entry', methods=["GET"])
 def get_entry():
     try:
-        entry = db.entry.find_one({"store_name": request.args.get("store_name")})
+        entry = db.entry.find_one({"store_id": request.args.get("store_id")})
         return jsonify(entry), 200
     except:
         return jsonify({"response":"Entry Not Found", "code": 404}), 404

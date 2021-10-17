@@ -48,21 +48,22 @@
 ### /entry (POST)
 
 {
- "user_name": jose,
- "store_name": "GeneralStore"
+ "user_id": "2323454",
+ "store_id": "6409cecd413d495796d7fe47fb6d4591"  
 }
 
 ### /entry (GET)
 
-example (local url) with postman: http://127.0.0.1:4032/entry?store_name=GeneralStore
-example (heroku url) with postman: http://viralert2.herokuapp.com/entry?store_name=GeneralStore
+example (local url) with postman: http://127.0.0.1:4032/entry?store_id=6409cecd413d495796d7fe47fb6d4591
+
+example (heroku url) with postman: http://viralert2.herokuapp.com/entry?store_id=6409cecd413d495796d7fe47fb6d4591
 
 response: 
 
 {
-    "_id": "028171f5896c4aca9c067e363b186870",
-    "date": "14-Oct-2021",
-    "store_name": "GeneralStore",
-    "time": "19:52:07",
-    "user_name": "jose"
+    "_id": "106257b6b86c491f9038f97e73d1e441",
+    "date": "17-Oct-2021",
+    "store_id": "6409cecd413d495796d7fe47fb6d4591",
+    "time": "11:33:58",
+    "user_id": "2323454"
 }
