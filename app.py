@@ -59,13 +59,17 @@ def login_user():
 def register_entry():
     try:
         data = request.get_json()
-        db.entry.insert_one({
-            "_id": uuid.uuid4().hex,
-            "user_id": data["user_id"],
-            "store_id": data["store_id"],
-            "date": datetime.now().strftime("%d-%b-%Y"),
-            "time": datetime.now().strftime("%H:%M:%S")
-        })
+        local = db.user.find_one({"_id": data["store_id"]})
+        if local:
+            db.entry.insert_one({
+                "_id": uuid.uuid4().hex,
+                "user_id": data["user_id"],
+                "store_id": data["store_id"],
+                "date": datetime.now().strftime("%d-%b-%Y"),
+                "time": datetime.now().strftime("%H:%M:%S")
+            })
+        else:
+            return jsonify({"response":"Store Not Found", "code": 404}), 404
         return jsonify({"response":"Created", "code": 201}), 201
     except:
         return jsonify({"response":"Not Found", "code": 404}), 404
