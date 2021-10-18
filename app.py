@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 from datetime import datetime
 import uuid
+import json
 
 app = Flask(__name__)
 app.config["MONG_DBNAME"] = "seminario"
@@ -77,8 +78,12 @@ def register_entry():
 @app.route('/entry', methods=["GET"])
 def get_entry():
     try:
-        entry = db.entry.find_one({"store_id": request.args.get("store_id")})
-        return jsonify(entry), 200
+        data = request.get_json()
+        entry = list(db.entry.find({"user_id": request.args.get("user_id")},{"_id": 0, "user_id": 0}))
+        for doc in entry:
+            store=db.user.find_one({"_id": doc["store_id"]},{"_id":0, "email":0, "password":0})
+            doc["store_name"]=store["name"]
+        return json.dumps(entry)
     except:
         return jsonify({"response":"Entry Not Found", "code": 404}), 404
 
