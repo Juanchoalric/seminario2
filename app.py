@@ -67,8 +67,8 @@ def register_entry():
                 "_id": uuid.uuid4().hex,
                 "user_id": data["user_id"],
                 "store_id": data["store_id"],
-                "date": datetime.now().strftime("%d-%b-%Y"),
-                "time": datetime.now().strftime("%H:%M:%S")
+                "date": datetime.strptime(data["date"],"%d-%m-%Y"),
+                "time": datetime.strptime(data["time"] ,"%H:%M:%S")
             })
         else:
             return jsonify({"response":"Store Not Found", "code": 404}), 404
