@@ -9,7 +9,8 @@ class Email(object):
         self.password = "!Viralert123"
         self.from_addr = "viralert.sip2@gmail.com"
         self.to = account
-        self.message = "El motivo de este mail es para notificarle que el dia %s usted tuvo contacto estrecho con una caso positivo de covid" %(date)
+        self.SUBJECT = "Alerta de contacto estrecho"
+        self.TEXT = "El motivo de este mail es para notificarle que el dia %s usted tuvo contacto estrecho con una caso positivo de covid" %(date)
 
     def start_server(self):
         self.server.starttls()
@@ -19,7 +20,8 @@ class Email(object):
         time.sleep(2)
 
     def send_message(self):
-        self.server.sendmail(self.from_addr, self.to, self.message)
+        message = 'Subject: {}\n\n{}'.format(self.SUBJECT, self.TEXT)
+        self.server.sendmail(self.from_addr, self.to, message)
 
     def stop_server(self):
         self.server.quit()

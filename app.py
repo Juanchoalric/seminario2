@@ -63,12 +63,14 @@ def register_entry():
         data = request.get_json()
         local = db.user.find_one({"_id": data["store_id"]})
         if local:
+            date = datetime.strptime(data["date"],"%d-%m-%Y")
+            time = datetime.strptime(data["time"] ,"%H:%M:%S")
             db.entry.insert_one({
                 "_id": uuid.uuid4().hex,
                 "user_id": data["user_id"],
                 "store_id": data["store_id"],
-                "date": datetime.strptime(data["date"],"%d-%m-%Y"),
-                "time": datetime.strptime(data["time"] ,"%H:%M:%S")
+                "date": str(date.date()),
+                "time": str(time.time())
             })
         else:
             return jsonify({"response":"Store Not Found", "code": 404}), 404
@@ -91,12 +93,18 @@ def get_entry():
 @app.route('/notify', methods=["GET"])
 def send_notification():
     try:
-        entry = list(db.entry.find({"user_id": request.args.get("user_id"), "date": datetime.now().strftime("%d-%b-%Y")},{"_id": 0}))
+        data_user_id = request.args.get("user_id")
+        entry = list(db.entry.find({"user_id": data_user_id, "date": datetime.now().strftime("%Y-%m-%d")},{"_id": 0}))
+        user_notificator = db.user.find_one({"_id": data_user_id})
+        user_alert_datetime = user_notificator.get('alert_datetime')
+        date_time_now = datetime.now()
+        if ((user_alert_datetime) and (date_time_now.timestamp() < (datetime.strptime(user_alert_datetime,"%d-%m-%Y %H:%M:%S") + timedelta(days=14)).timestamp())):
+            return jsonify({"response":"User has already notified their contagion", "code": 400}), 400
         for doc in entry:
-            date_time = datetime.strptime(str(doc["date"])+' '+str(doc["time"]),"%d-%b-%Y %H:%M:%S")
+            date_time = datetime.strptime(str(doc["date"])+' '+str(doc["time"]),"%Y-%m-%d %H:%M:%S")
             if (date_time.hour >= 23):
                 date_time_limit = date_time + timedelta(days=1)
-                new_date = datetime.strftime(date_time_limit,"%d-%b-%Y")
+                new_date = datetime.strftime(date_time_limit,"%Y-%m-%d")
                 user_contacts_before = list(db.entry.find({"store_id": doc["store_id"], "date": doc["date"]},{"_id": 0, "store_id": 0}))
                 user_contacts_after = list(db.entry.find({"store_id": doc["store_id"], "date": new_date},{"_id": 0, "store_id": 0}))
                 user_contacts = user_contacts_before + user_contacts_after
@@ -108,7 +116,7 @@ def send_notification():
             date_time_updated_plus_timestamp = date_time_updated_plus.timestamp()
             date_time_updated_minum_timestamp = date_time_updated_minum.timestamp()
             for user in user_contacts:
-                user_date_time = datetime.strptime(str(user["date"])+' '+str(user["time"]),"%d-%b-%Y %H:%M:%S")
+                user_date_time = datetime.strptime(str(user["date"])+' '+str(user["time"]),"%Y-%m-%d %H:%M:%S")
                 user_timestamp = user_date_time.timestamp()
                 if ((user_timestamp>=date_time_timestamp and user_timestamp<=date_time_updated_plus_timestamp and doc["user_id"]!=user["user_id"]) or 
                     (user_timestamp<=date_time_timestamp and user_timestamp>=date_time_updated_minum_timestamp and doc["user_id"]!=user["user_id"])):
@@ -118,6 +126,7 @@ def send_notification():
                     notification.make_login()
                     notification.send_message()
                     notification.stop_server()
+        db.user.update_one({"_id": data_user_id}, {"$set": {"alert_datetime": datetime.now().strftime("%d-%m-%Y %H:%M:%S")}})
         return jsonify({"response":"Users notified", "code": 200}), 200
     except:
         return jsonify({"response":"Notification could not be sent", "code": 404}), 404
