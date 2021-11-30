@@ -21,7 +21,6 @@ def register_user():
             "_id": data["document"],
             "name": data["name"],
             "email": data["email"],
-            "surname": data["surname"],
             "password": data["password"]
         })
         return jsonify({"response":"Created", "code": 201}), 201
@@ -112,7 +111,7 @@ def send_notification():
                     user_contacts = user_contacts_before + user_contacts_after
                 else:
                     user_contacts = list(db.entry.find({"store_id": doc["store_id"], "date": doc["date"]},{"_id": 0, "store_id": 0}))
-                date_time_updated_plus = date_time + timedelta(hours=1)
+                date_time_updated_plus = date_time + timedelta(hours=2)
                 date_time_updated_minum = date_time + timedelta(hours=-1)
                 date_time_timestamp = date_time.timestamp()
                 date_time_updated_plus_timestamp = date_time_updated_plus.timestamp()
